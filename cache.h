@@ -3,6 +3,7 @@
 
 #include <boost/optional.hpp>
 #include <unordered_map>
+#include <string>
 
 namespace Patrick {
   template <class T> using optional = boost::optional<T>;
@@ -10,7 +11,7 @@ namespace Patrick {
 
   struct Element
   {
-    optional<String> value;
+    String value;
     optional<int> expiration;
 
     Element() {}
@@ -21,55 +22,43 @@ namespace Patrick {
     }
   };
   
-  enum class Status { STORED, ERROR };
+  enum class Status { STORED, ERROR, DELETED };
 
   class Cache
   {
     private:
-      const int MAX_SIZE = 16 * 1048576;
+      const long MAX_SIZE = 16 * 1048576;
       const int KEY_SIZE = 64;
       const int VALUE_SIZE = 255;
+      long cacheSize;
+
       std::unordered_map<String, int> accessCount; 
       std::unordered_map<String, Element> storage;
 
     public:
       Cache()
-        : storage()
+        : storage(), accessCount()
       {
+      }
+      // TODO: Add helper constructors: existing maps, move constructors
+
+      optional<String> get(const String& key);
+      Status set(const String& key, const String& value, const optional<int>& expires=optional<int>());
+      Status add(const String& key, const String& value, const optional<int>& expires=optional<int>());
+      Status increment(const String& key, const String& amount="1")
+      {
+        return incrementHelper(key, amount, [](int x) -> int { return x; });
+      }
+      Status decrement(const String& key, const String& amount="1")
+      {
+        return incrementHelper(key, amount, [](int x) -> int { return -x; });
       }
 
-      optional<String> get(const String& key)
-      {
-        if (storage.find(key) == storage.end()) {
-          return optional<String>();
-        } else {
-          auto val = storage.at(key);
-          accessCount[key]++;
-          return val.value;
-        }
-      }
+      Status deleteElem(const String& key);
 
-      Status set(const String& key, const String& value, const optional<int>& expires=optional<int>())
-      {
-        Element e(value, expires);
-        try {
-          storage[key] = e;
-          accessCount[key] = 0;
-        } catch(...) {
-          auto eptr = std::current_exception(); // Useful for logging later
-          return Status::ERROR;
-        }
-        return Status::STORED;
-      }
-
-      Status add(const String& key, const String& value, const optional<int>& expires=optional<int>())
-      {
-        if(storage.find(key) != storage.end()) {
-          return Status::ERROR;
-        } else {
-          return set(key, value, expires);
-        }
-      }
+    private:
+      Status incrementInteger(const String& key, int other);
+      Status incrementHelper(const String& key, const String& amount, std::function<int(int)> f);
   };
 
 }
