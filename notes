@@ -1,0 +1,3 @@
+PeriodicExecutor uses async. Runs on 1 thread so blocks. 
+Exceptional Exceptions are caught, but not logged
+Cache does not have defined copy, move contructors
