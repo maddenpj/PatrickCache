@@ -8,7 +8,7 @@ namespace Patrick {
   template <class T> using optional = boost::optional<T>;
   typedef std::string String;
 
-  struct Key 
+  struct Element
   {
     optional<String> value;
     optional<int> expiration;
@@ -60,6 +60,15 @@ namespace Patrick {
           return Status::ERROR;
         }
         return Status::STORED;
+      }
+
+      Status add(const String& key, const String& value, const optional<int>& expires=optional<int>())
+      {
+        if(storage.find(key) != storage.end()) {
+          return Status::ERROR;
+        } else {
+          return set(key, value, expires);
+        }
       }
   };
 
