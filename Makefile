@@ -5,7 +5,7 @@ CFLAGS=-std=c++11 -I. -I/usr/local/Cellar/boost/1.55.0_1/include
 LDIR= -L./ -L/usr/local/Cellar/boost/1.55.0_1/lib
 LIBS=
 
-OBJ=main.o
+OBJ=main.o cache.o
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
