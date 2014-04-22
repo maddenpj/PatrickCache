@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "cache.h"
 
 using namespace Patrick;
@@ -15,6 +17,18 @@ optional<String> Cache::get(const String& key)
 
 Status Cache::set(const String& key, const String& value, const optional<int>& expires)
 {
+  // if(key.size() > KEY_SIZE) return Status::ERROR;
+  // if(value.size() > KEY_SIZE) return Status::ERROR;
+  
+  long sizeDelta = value.size();
+  if(storage.find(key) == storage.end()) {
+    sizeDelta += key.size();
+  } else {
+    auto elem = storage.at(key);
+    sizeDelta -= elem.value.size();
+  }
+  cacheSize += sizeDelta;
+
   Element e(value, expires);
   try {
     storage[key] = e;
@@ -42,9 +56,12 @@ std::pair<Status, int> Cache::incrementInteger(const String& key, int other)
   } else {
     try {
       auto elem = storage[key];
+      long sizeDelta = elem.value.size();
       int value = std::stoi(elem.value);
       value += other;
       elem.value = std::to_string(value);
+      sizeDelta = elem.value.size() - sizeDelta;
+      cacheSize += sizeDelta;
       storage[key] = elem;
       accessCount[key]++;
       return std::make_pair(Status::STORED, value);
@@ -97,11 +114,26 @@ void Cache::garbageCollect()
   // Remove Expired
   auto itr = storage.begin();
   while (itr != storage.end()) {
-    if(*itr->second.expiration <= 0) {
+    if(itr->second.expiration && *itr->second.expiration <= 0) {
       std::cout << "Removing: " << itr->first << std::endl;
       itr = storage.erase(itr);
     } else {
       itr++;
     }
+  }
+
+  std::vector<std::pair<String, int>> v;
+  std::copy(accessCount.begin(), accessCount.end(), std::back_inserter(v));
+  using pair = std::pair<String, int>;
+  std::sort(v.begin(), v.end(), [](const pair& x, const pair& y) { return x.second < y.second; });
+
+  auto vItr = v.begin();
+  while(cacheSize > MAX_SIZE && vItr != v.end()) {
+    auto elem = storage[vItr->first];
+    long sizeDelta = vItr->first.size() + elem.value.size();
+    storage.erase(vItr->first);
+    accessCount.erase(vItr->first);
+    cacheSize -= sizeDelta;
+    vItr++;
   }
 }

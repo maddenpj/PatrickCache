@@ -37,7 +37,7 @@ namespace Patrick {
 
     public:
       Cache()
-        : storage(), accessCount()
+        : storage(), accessCount(), cacheSize(0)
       {
       }
       // TODO: Add helper constructors: existing maps, move constructors
@@ -62,6 +62,10 @@ namespace Patrick {
       {
         expire();
         garbageCollect();
+      }
+
+      long getCacheSize() {
+        return cacheSize;
       }
 
     private:
