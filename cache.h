@@ -45,11 +45,11 @@ namespace Patrick {
       optional<String> get(const String& key);
       Status set(const String& key, const String& value, const optional<int>& expires=optional<int>());
       Status add(const String& key, const String& value, const optional<int>& expires=optional<int>());
-      Status increment(const String& key, const String& amount="1")
+      std::pair<Status, int> increment(const String& key, const String& amount="1")
       {
         return incrementHelper(key, amount, [](int x) -> int { return x; });
       }
-      Status decrement(const String& key, const String& amount="1")
+      std::pair<Status, int> decrement(const String& key, const String& amount="1")
       {
         return incrementHelper(key, amount, [](int x) -> int { return -x; });
       }
@@ -57,8 +57,10 @@ namespace Patrick {
       Status deleteElem(const String& key);
 
     private:
-      Status incrementInteger(const String& key, int other);
-      Status incrementHelper(const String& key, const String& amount, std::function<int(int)> f);
+      std::pair<Status, int> incrementInteger(const String& key, int other);
+      std::pair<Status, int> incrementHelper(const String& key, const String& amount, std::function<int(int)> f);
+
+      void expire(int seconds=1);
   };
 
 }
