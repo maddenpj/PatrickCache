@@ -7,16 +7,19 @@ LIBS= -lpthread
 
 OBJ=cache.o
 
+%.o: test/%.cpp
+	$(CC) $(CFLAGS) -c $<
+
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
 
 basic_io_test: $(OBJ) basic_io_test.o
-	$(CC) $(CFLAGS) -o basic_io_test basic_io_test.o $(OBJ) $(LIDR) $(LIBS)
+	$(CC) $(CFLAGS) -o bin/basic_io_test basic_io_test.o $(OBJ) $(LIDR) $(LIBS)
 
 expiration_test: $(OBJ) expiration_test.o
-	$(CC) $(CFLAGS) -o expiration_test expiration_test.o $(OBJ) $(LIDR) $(LIBS)
+	$(CC) $(CFLAGS) -o bin/expiration_test expiration_test.o $(OBJ) $(LIDR) $(LIBS)
 
-all: expiration_test basic_io_test 
+all: expiration_test basic_io_test
 
 clean:
-	rm -f *.o basic_io_test expiration_test
+	rm -f *.o bin/basic_io_test bin/expiration_test

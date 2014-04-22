@@ -6,7 +6,7 @@ using namespace Patrick;
 
 int main()
 {
-  std::shared_ptr<Cache> c(new Cache("Cut"));
+  std::shared_ptr<Cache> c(new Cache);
   
   c->add("expires-4", "test", optional<int>(4));
   c->set("expires-2", "test2", optional<int>(2));
