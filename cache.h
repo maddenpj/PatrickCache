@@ -56,11 +56,18 @@ namespace Patrick {
 
       Status deleteElem(const String& key);
 
+      void expire(int seconds=1);
+      void garbageCollect();
+      void cleanUp()
+      {
+        expire();
+        garbageCollect();
+      }
+
     private:
       std::pair<Status, int> incrementInteger(const String& key, int other);
       std::pair<Status, int> incrementHelper(const String& key, const String& amount, std::function<int(int)> f);
 
-      void expire(int seconds=1);
   };
 
 }

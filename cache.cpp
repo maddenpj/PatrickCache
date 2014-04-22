@@ -83,13 +83,25 @@ Status Cache::deleteElem(const String& key)
   }
 }
 
-void Cache::expire(int seconds) {
+void Cache::expire(int seconds)
+{
   for (auto& x : storage) {
     if(x.second.expiration) {
-      std::cout << x.first << std::endl;
-      std::cout << *x.first.expiration << std::endl;
-      *x.first.expiration--;
-      std::cout << *x.first.expiration << std::endl;
+      --*x.second.expiration;
+    }
+  }
+}
+
+void Cache::garbageCollect()
+{
+  // Remove Expired
+  auto itr = storage.begin();
+  while (itr != storage.end()) {
+    if(*itr->second.expiration <= 0) {
+      std::cout << "Removing: " << itr->first << std::endl;
+      itr = storage.erase(itr);
+    } else {
+      itr++;
     }
   }
 }
