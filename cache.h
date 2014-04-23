@@ -45,6 +45,7 @@ namespace Patrick {
       optional<String> get(const String& key);
       Status set(const String& key, const String& value, optional<int> expires=optional<int>());
       Status add(const String& key, const String& value, optional<int> expires=optional<int>());
+
       std::pair<Status, int> increment(const String& key, const String& amount="1")
       {
         return incrementHelper(key, amount, [](int x) -> int { return x; });
