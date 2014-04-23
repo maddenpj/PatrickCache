@@ -3,7 +3,7 @@ CC=g++-4.8
 CFLAGS=-std=c++11 -I. -I/usr/local/Cellar/boost/1.55.0_1/include
 
 LDIR= -L./ -L/usr/local/Cellar/boost/1.55.0_1/lib
-LIBS= -lpthread
+LIBS=
 
 OBJ=cache.o
 
@@ -22,7 +22,10 @@ basic_io_test: $(OBJ) basic_io_test.o
 expiration_test: $(OBJ) expiration_test.o
 	$(CC) $(CFLAGS) -o bin/expiration_test expiration_test.o $(OBJ) $(LIDR) $(LIBS)
 
-all: expiration_test basic_io_test eviction_test
+repl: $(OBJ) main.o
+	$(CC) $(CFLAGS) -o bin/repl main.o $(OBJ) $(LDIR) $(LIBS)
+
+all: expiration_test basic_io_test eviction_test repl
 
 clean:
 	rm -f *.o bin/basic_io_test bin/expiration_test

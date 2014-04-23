@@ -15,7 +15,7 @@ optional<String> Cache::get(const String& key)
   }
 }
 
-Status Cache::set(const String& key, const String& value, const optional<int>& expires)
+Status Cache::set(const String& key, const String& value, optional<int> expires)
 {
   // if(key.size() > KEY_SIZE) return Status::ERROR;
   // if(value.size() > KEY_SIZE) return Status::ERROR;
@@ -40,7 +40,7 @@ Status Cache::set(const String& key, const String& value, const optional<int>& e
   return Status::STORED;
 }
 
-Status Cache::add(const String& key, const String& value, const optional<int>& expires)
+Status Cache::add(const String& key, const String& value, optional<int> expires)
 {
   if(storage.find(key) != storage.end()) {
     return Status::ERROR;
@@ -122,6 +122,7 @@ void Cache::garbageCollect()
     }
   }
 
+  // Remove LRU until size limit matches
   std::vector<std::pair<String, int>> v;
   std::copy(accessCount.begin(), accessCount.end(), std::back_inserter(v));
   using pair = std::pair<String, int>;

@@ -1,3 +1,5 @@
 Exceptional Exceptions are caught, but not logged
 Cache does not have defined copy, move contructors
 Cache is not configurable ( max size, key size, etc)
+Should use asserts in tests :(
+
