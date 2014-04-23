@@ -1,4 +1,2 @@
-cache_test
 *.o
-basic_io_test
-expiration_test
+bin/*
