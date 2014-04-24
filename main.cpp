@@ -85,7 +85,7 @@ int main()
 {
   std::shared_ptr<Cache> c(new Cache);
   PeriodicExecutor<Cache> p(1, c, &Cache::cleanUp);
-  std::cout << "PatrickCache started" << std::endl;
+  std::cout << "PatrickCache started (help for supported commands)" << std::endl;
 
   auto commands = setupRepl();
 
