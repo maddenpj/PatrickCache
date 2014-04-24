@@ -17,8 +17,8 @@ optional<String> Cache::get(const String& key)
 
 Status Cache::set(const String& key, const String& value, optional<int> expires)
 {
-  // if(key.size() > KEY_SIZE) return Status::ERROR;
-  // if(value.size() > KEY_SIZE) return Status::ERROR;
+  if(key.size() > KEY_SIZE) return Status::ERROR;
+  if(value.size() > KEY_SIZE) return Status::ERROR;
   
   long sizeDelta = value.size();
   if(storage.find(key) == storage.end()) {
